@@ -42,7 +42,7 @@ const toppings = [
   },
 
   {
-    name:"Dimsum Aci",
+    name:"Dimsum",
     price:1000,
     image:"Dimsum.jpeg"
   },
@@ -194,7 +194,7 @@ const toppings = [
   {
     name:"Tahu Isi",
     price:2000,
-    image:"Tahu IsI.jpeg"
+    image:"Tahu Isi.jpeg"
   },
 
   {
@@ -246,7 +246,7 @@ const toppings = [
   },
 
   {
-    name:"Crab Stik",
+    name:"Crab Stick",
     price:2000,
     image:"Crab Stick.jpeg"
   },
@@ -358,369 +358,835 @@ const drinks = [
 
 ];
 
-/* =========================
-   ELEMENT (SAFE)
-========================= */
+/* =========================================
+   ELEMENT
+========================================= */
 
-const menuGrid = document.getElementById("menuGrid");
-const drinkGrid = document.getElementById("drinkGrid");
-const cartItems = document.getElementById("cartItems");
-const totalPrice = document.getElementById("totalPrice");
-const totalItem = document.getElementById("totalItem");
-const cartCount = document.getElementById("cartCount");
-const checkoutBtn = document.getElementById("checkoutBtn");
+const menuGrid =
+document.getElementById("menuGrid");
 
-const floatingToggle = document.getElementById("floatingToggle");
-const cartBox = document.getElementById("cartBox");
-const cartOverlay = document.getElementById("cartOverlay");
-const closeCart = document.getElementById("closeCart");
+const drinkGrid =
+document.getElementById("drinkGrid");
 
-/* =========================
+const cartItems =
+document.getElementById("cartItems");
+
+const totalPrice =
+document.getElementById("totalPrice");
+
+const totalItem =
+document.getElementById("totalItem");
+
+const cartCount =
+document.getElementById("cartCount");
+
+const checkoutBtn =
+document.getElementById("checkoutBtn");
+
+const floatingToggle =
+document.getElementById("floatingToggle");
+
+const cartBox =
+document.getElementById("cartBox");
+
+const cartOverlay =
+document.getElementById("cartOverlay");
+
+const closeCart =
+document.getElementById("closeCart");
+
+/* =========================================
    STATE
-========================= */
+========================================= */
 
 let cart = [];
+
 let currentDistance = 0;
+
 let userTooFar = false;
+
 let locationReady = false;
 
-/* =========================
-   FIX STORE LOCATION
-========================= */
+let storeClosed = false;
+
+let stockRealtime = {};
+
+/* =========================================
+   STORE LOCATION
+========================================= */
 
 const STORE_LAT = -7.292564;
+
 const STORE_LNG = 108.208624;
+
 const MAX_DISTANCE = 15;
 
-/* =========================
-   CART OPEN / CLOSE FIX (WAJIB AMAN)
-========================= */
+/* =========================================
+   REALTIME STORE STATUS
+========================================= */
 
-function openCart() {
-  if (cartBox) cartBox.classList.add("active");
-  if (cartOverlay) cartOverlay.classList.add("active");
+onSnapshot(
+
+  doc(db,"settings","storeStatus"),
+
+  (snap)=>{
+
+    const data =
+    snap.data();
+
+    storeClosed =
+    data?.closed || false;
+
+    setCheckoutState();
+    renderMenu();
+
+  }
+
+);
+
+/* =========================================
+   REALTIME STOCK
+========================================= */
+
+onSnapshot(
+
+  collection(db,"stocks"),
+
+  (snapshot)=>{
+
+    stockRealtime = {};
+
+    snapshot.forEach((docSnap)=>{
+
+      stockRealtime[docSnap.id] =
+      docSnap.data().available;
+
+    });
+
+    renderMenu();
+
+  }
+
+);
+
+/* =========================================
+   CART OPEN CLOSE
+========================================= */
+
+function openCart(){
+
+  cartBox?.classList.add(
+    "active"
+  );
+
+  cartOverlay?.classList.add(
+    "active"
+  );
+
 }
 
-function closeCartBox() {
-  if (cartBox) cartBox.classList.remove("active");
-  if (cartOverlay) cartOverlay.classList.remove("active");
+function closeCartBox(){
+
+  cartBox?.classList.remove(
+    "active"
+  );
+
+  cartOverlay?.classList.remove(
+    "active"
+  );
+
 }
 
-/* =========================
-   FLOATING BUTTON SAFE BIND
-========================= */
+window.addEventListener(
 
-window.addEventListener("DOMContentLoaded", () => {
+  "DOMContentLoaded",
 
-  if (floatingToggle) {
-    floatingToggle.addEventListener("click", openCart);
-  }
+  ()=>{
 
-  if (closeCart) {
-    closeCart.addEventListener("click", closeCartBox);
-  }
-
-  if (cartOverlay) {
-    cartOverlay.addEventListener("click", closeCartBox);
-  }
-
-});
-
-/* =========================
-   DISTANCE (FIXED)
-========================= */
-
-function calculateDistance(lat1, lon1, lat2, lon2) {
-  const R = 6371;
-
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(lat1 * Math.PI / 180) *
-    Math.cos(lat2 * Math.PI / 180) *
-    Math.sin(dLon / 2) ** 2;
-
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-  return R * c;
-}
-
-/* =========================
-   LOCATION
-========================= */
-
-function getUserLocation() {
-
-  locationReady = false;
-  userTooFar = true;
-
-  if (!navigator.geolocation) {
-    locationReady = true;
-    return;
-  }
-
-  navigator.geolocation.getCurrentPosition((pos) => {
-
-    const lat = pos.coords.latitude;
-    const lng = pos.coords.longitude;
-
-    currentDistance = calculateDistance(
-      STORE_LAT,
-      STORE_LNG,
-      lat,
-      lng
+    floatingToggle?.addEventListener(
+      "click",
+      openCart
     );
 
-    currentDistance = Number(currentDistance.toFixed(1));
+    closeCart?.addEventListener(
+      "click",
+      closeCartBox
+    );
 
-    userTooFar = currentDistance > MAX_DISTANCE;
-    locationReady = true;
+    cartOverlay?.addEventListener(
+      "click",
+      closeCartBox
+    );
 
-    updateCart();
+  }
 
-  }, () => {
+);
 
-    locationReady = true;
-    userTooFar = true;
-    updateCart();
+/* =========================================
+   DISTANCE
+========================================= */
 
-  }, {
-    enableHighAccuracy: true,
-    timeout: 10000
-  });
+function calculateDistance(
+  lat1,
+  lon1,
+  lat2,
+  lon2
+){
+
+  const R = 6371;
+
+  const dLat =
+  (lat2 - lat1) *
+  Math.PI / 180;
+
+  const dLon =
+  (lon2 - lon1) *
+  Math.PI / 180;
+
+  const a =
+
+    Math.sin(dLat/2) ** 2 +
+
+    Math.cos(
+      lat1 * Math.PI/180
+    ) *
+
+    Math.cos(
+      lat2 * Math.PI/180
+    ) *
+
+    Math.sin(dLon/2) ** 2;
+
+  const c =
+  2 * Math.atan2(
+    Math.sqrt(a),
+    Math.sqrt(1-a)
+  );
+
+  return R * c;
+
 }
 
-/* =========================
+/* =========================================
+   LOCATION
+========================================= */
+
+function getUserLocation(){
+
+  locationReady = false;
+
+  userTooFar = true;
+
+  if(!navigator.geolocation){
+
+    locationReady = true;
+    return;
+
+  }
+
+  navigator.geolocation.getCurrentPosition(
+
+    (pos)=>{
+
+      const lat =
+      pos.coords.latitude;
+
+      const lng =
+      pos.coords.longitude;
+
+      currentDistance =
+      calculateDistance(
+        STORE_LAT,
+        STORE_LNG,
+        lat,
+        lng
+      );
+
+      currentDistance =
+      Number(
+        currentDistance.toFixed(1)
+      );
+
+      userTooFar =
+      currentDistance >
+      MAX_DISTANCE;
+
+      locationReady = true;
+
+      updateCart();
+
+    },
+
+    ()=>{
+
+      locationReady = true;
+
+      userTooFar = true;
+
+      updateCart();
+
+    },
+
+    {
+
+      enableHighAccuracy:true,
+      timeout:10000
+
+    }
+
+  );
+
+}
+
+/* =========================================
    SHIPPING
-========================= */
+========================================= */
 
-function getShippingCost() {
-  if (currentDistance <= 3) return 5000;
-  if (currentDistance <= 6) return 8000;
-  if (currentDistance <= 10) return 10000;
-  if (currentDistance <= 15) return 15000;
+function getShippingCost(){
+
+  if(currentDistance <= 3)
+  return 5000;
+
+  if(currentDistance <= 6)
+  return 8000;
+
+  if(currentDistance <= 10)
+  return 10000;
+
+  if(currentDistance <= 15)
+  return 15000;
+
   return 0;
+
 }
 
-/* =========================
+/* =========================================
    RENDER MENU
-========================= */
+========================================= */
 
-function renderMenu() {
-  if (!menuGrid) return;
+function renderMenu(){
+
+  if(!menuGrid) return;
+
   menuGrid.innerHTML = "";
 
-  toppings.forEach((item, index) => {
+  toppings.forEach((item,index)=>{
 
-    const qty = cart.filter(x => x.name === item.name).length;
+    const qty =
+    cart.filter(
+      x => x.name === item.name
+    ).length;
 
-    const card = document.createElement("div");
-    card.className = "card";
+    const available =
+    stockRealtime[item.name] !== false;
+
+    const card =
+    document.createElement("div");
+
+    card.className =
+    "card";
 
     card.innerHTML = `
+
       <img src="${item.image}">
+
       <div class="content">
-        <h3>${item.name}</h3>
-        <div class="price">Rp ${item.price.toLocaleString("id-ID")}</div>
+
+        <h3>
+          ${item.name}
+        </h3>
+
+        <div class="
+          stock-label
+          ${
+            available
+            ? "ready"
+            : "empty"
+          }
+        ">
+
+          ${
+            available
+            ? "READY"
+            : "HABIS"
+          }
+
+        </div>
+
+        <div class="price">
+
+          Rp ${item.price
+          .toLocaleString("id-ID")}
+
+        </div>
 
         <div class="counter">
-          <button onclick="minusItem(${index})">-</button>
-          <span>${qty}</span>
-          <button onclick="plusItem(${index})">+</button>
+
+          <button
+            onclick="
+            minusItem(${index})
+            "
+          >
+            -
+          </button>
+
+          <span>
+            ${qty}
+          </span>
+
+          <button
+
+            onclick="
+            plusItem(${index})
+            "
+
+            ${
+              !available ||
+              storeClosed
+              ? "disabled"
+              : ""
+            }
+
+          >
+            +
+          </button>
+
         </div>
+
       </div>
+
     `;
 
     menuGrid.appendChild(card);
+
   });
+
 }
 
-/* =========================
+/* =========================================
    RENDER DRINK
-========================= */
+========================================= */
 
-function renderDrinks() {
-  if (!drinkGrid) return;
+function renderDrinks(){
+
+  if(!drinkGrid) return;
+
   drinkGrid.innerHTML = "";
 
-  drinks.forEach((item, index) => {
+  drinks.forEach((item,index)=>{
 
-    const qty = cart.filter(x => x.name === item.name).length;
+    const qty =
+    cart.filter(
+      x => x.name === item.name
+    ).length;
 
-    const card = document.createElement("div");
-    card.className = "card";
+    const card =
+    document.createElement("div");
+
+    card.className =
+    "card";
 
     card.innerHTML = `
+
       <div class="content">
-        <h3>${item.name}</h3>
-        <div class="price">Rp ${item.price.toLocaleString("id-ID")}</div>
+
+        <h3>
+          ${item.name}
+        </h3>
+
+        <div class="price">
+
+          Rp ${item.price
+          .toLocaleString("id-ID")}
+
+        </div>
 
         <div class="counter">
-          <button onclick="minusDrink(${index})">-</button>
-          <span>${qty}</span>
-          <button onclick="plusDrink(${index})">+</button>
+
+          <button
+            onclick="
+            minusDrink(${index})
+            "
+          >
+            -
+          </button>
+
+          <span>
+            ${qty}
+          </span>
+
+          <button
+            onclick="
+            plusDrink(${index})
+            "
+          >
+            +
+          </button>
+
         </div>
+
       </div>
+
     `;
 
     drinkGrid.appendChild(card);
+
   });
+
 }
 
-/* =========================
+/* =========================================
    CART ACTION
-========================= */
+========================================= */
 
-window.plusItem = (i) => {
-  cart.push({ ...toppings[i] });
+window.plusItem = (i)=>{
+
+  const item =
+  toppings[i];
+
+  const available =
+  stockRealtime[item.name] !== false;
+
+  if(!available) return;
+
+  if(storeClosed) return;
+
+  cart.push({
+    ...item
+  });
+
   updateCart();
+
 };
 
-window.minusItem = (i) => {
-  const idx = cart.findIndex(x => x.name === toppings[i].name);
-  if (idx !== -1) cart.splice(idx, 1);
+window.minusItem = (i)=>{
+
+  const idx =
+  cart.findIndex(
+    x => x.name === toppings[i].name
+  );
+
+  if(idx !== -1){
+
+    cart.splice(idx,1);
+
+  }
+
   updateCart();
+
 };
 
-window.plusDrink = (i) => {
-  cart.push({ ...drinks[i] });
+window.plusDrink = (i)=>{
+
+  cart.push({
+    ...drinks[i]
+  });
+
   updateCart();
+
 };
 
-window.minusDrink = (i) => {
-  const idx = cart.findIndex(x => x.name === drinks[i].name);
-  if (idx !== -1) cart.splice(idx, 1);
+window.minusDrink = (i)=>{
+
+  const idx =
+  cart.findIndex(
+    x => x.name === drinks[i].name
+  );
+
+  if(idx !== -1){
+
+    cart.splice(idx,1);
+
+  }
+
   updateCart();
+
 };
 
-/* =========================
-   CART UPDATE
-========================= */
+/* =========================================
+   UPDATE CART
+========================================= */
 
-function updateCart() {
+function updateCart(){
 
-  if (!cartItems) return;
+  if(!cartItems) return;
 
   cartItems.innerHTML = "";
 
   let total = 0;
+
   const grouped = {};
 
-  cart.forEach(item => {
-    grouped[item.name] = grouped[item.name] || { qty: 0, price: item.price };
+  cart.forEach((item)=>{
+
+    if(!grouped[item.name]){
+
+      grouped[item.name] = {
+
+        qty:0,
+        price:item.price
+
+      };
+
+    }
+
     grouped[item.name].qty++;
+
   });
 
-  Object.keys(grouped).forEach(name => {
+  Object.keys(grouped).forEach((name)=>{
 
-    const item = grouped[name];
-    const subtotal = item.qty * item.price;
+    const item =
+    grouped[name];
+
+    const subtotal =
+    item.qty * item.price;
+
     total += subtotal;
 
-    const div = document.createElement("div");
-    div.className = "cart-item";
+    const div =
+    document.createElement("div");
+
+    div.className =
+    "cart-item";
 
     div.innerHTML = `
+
       <strong>${name}</strong>
-      <span>${item.qty}x</span>
-      <b>Rp ${subtotal.toLocaleString("id-ID")}</b>
+
+      <span>
+        ${item.qty}x
+      </span>
+
+      <b>
+
+        Rp ${subtotal
+        .toLocaleString("id-ID")}
+
+      </b>
+
     `;
 
     cartItems.appendChild(div);
+
   });
 
-  const shipping = getShippingCost();
-  if (!userTooFar) total += shipping;
+  const shipping =
+  getShippingCost();
 
-  totalPrice.innerText = `Rp ${total.toLocaleString("id-ID")}`;
-  totalItem.innerText = `${cart.length} item`;
-  cartCount.innerText = cart.length;
+  if(!userTooFar){
+
+    total += shipping;
+
+  }
+
+  totalPrice.innerText =
+
+  `Rp ${total
+  .toLocaleString("id-ID")}`;
+
+  totalItem.innerText =
+  `${cart.length} item`;
+
+  cartCount.innerText =
+  cart.length;
 
   renderMenu();
   renderDrinks();
+
   setCheckoutState();
+
 }
 
-/* =========================
-   CHECKOUT STATE FIX
-========================= */
+/* =========================================
+   CHECKOUT STATE
+========================================= */
 
-function setCheckoutState() {
+function setCheckoutState(){
 
-  if (!checkoutBtn) return;
+  if(!checkoutBtn) return;
 
-  if (!locationReady) {
-    checkoutBtn.disabled = true;
-    checkoutBtn.innerHTML = "📍 Ambil lokasi...";
+  if(storeClosed){
+
+    checkoutBtn.disabled =
+    true;
+
+    checkoutBtn.innerHTML =
+    "🔴 Warung Tutup";
+
     return;
+
   }
 
-  if (userTooFar) {
-    checkoutBtn.disabled = true;
-    checkoutBtn.innerHTML = "❌ Diluar Jangkauan";
+  if(!locationReady){
+
+    checkoutBtn.disabled =
+    true;
+
+    checkoutBtn.innerHTML =
+    "📍 Ambil lokasi...";
+
     return;
+
   }
 
-  checkoutBtn.disabled = false;
-  checkoutBtn.innerHTML = "🛒 Checkout Sekarang";
+  if(userTooFar){
+
+    checkoutBtn.disabled =
+    true;
+
+    checkoutBtn.innerHTML =
+    "❌ Diluar Jangkauan";
+
+    return;
+
+  }
+
+  checkoutBtn.disabled =
+  false;
+
+  checkoutBtn.innerHTML =
+  "🛒 Checkout Sekarang";
+
 }
 
-/* =========================
+/* =========================================
    CHECKOUT
-========================= */
+========================================= */
 
-window.checkoutOrder = async () => {
+window.checkoutOrder =
+async()=>{
 
-  if (!locationReady) {
-    alert("Tunggu lokasi dulu");
+  if(!locationReady){
+
+    alert(
+      "Tunggu lokasi dulu"
+    );
+
     return;
+
   }
 
-  if (userTooFar) {
-    alert("Diluar jangkauan");
+  if(userTooFar){
+
+    alert(
+      "Diluar jangkauan"
+    );
+
     return;
+
   }
 
-  const name = document.getElementById("customerName").value;
-  const phone = document.getElementById("customerPhone").value;
-  const address = document.getElementById("customerAddress").value;
+  if(storeClosed){
 
-  if (!name || !phone || !address) {
-    alert("Lengkapi data");
+    alert(
+      "Warung sedang tutup"
+    );
+
     return;
+
   }
 
-  const shipping = getShippingCost();
+  const name =
+  document.getElementById(
+    "customerName"
+  ).value;
+
+  const phone =
+  document.getElementById(
+    "customerPhone"
+  ).value;
+
+  const address =
+  document.getElementById(
+    "customerAddress"
+  ).value;
+
+  if(
+    !name ||
+    !phone ||
+    !address
+  ){
+
+    alert(
+      "Lengkapi data"
+    );
+
+    return;
+
+  }
+
+  const shipping =
+  getShippingCost();
 
   const total =
-    cart.reduce((a, b) => a + b.price, 0) + shipping;
 
-  await addDoc(collection(db, "orders"), {
-    customerName: name,
-    customerPhone: phone,
-    customerAddress: address,
-    items: cart,
-    shipping,
-    distance: currentDistance,
-    total,
-    createdAt: new Date()
-  });
+    cart.reduce(
+      (a,b)=>a+b.price,
+      0
+    ) +
 
-  alert("Pesanan berhasil!");
+    shipping;
+
+  await addDoc(
+
+    collection(
+      db,
+      "orders"
+    ),
+
+    {
+
+      customerName:name,
+      customerPhone:phone,
+      customerAddress:address,
+
+      items:cart,
+
+      shipping,
+
+      distance:
+      currentDistance,
+
+      total,
+
+      status:"Menunggu",
+
+      createdAt:
+      new Date()
+
+    }
+
+  );
+
+  alert(
+    "Pesanan berhasil!"
+  );
 
   cart = [];
+
   updateCart();
+
 };
 
-/* =========================
+/* =========================================
    START APP
-========================= */
+========================================= */
 
-window.addEventListener("DOMContentLoaded", () => {
-  renderMenu();
-  renderDrinks();
-  updateCart();
-  getUserLocation();
-});
+window.addEventListener(
+
+  "DOMContentLoaded",
+
+  ()=>{
+
+    renderMenu();
+
+    renderDrinks();
+
+    updateCart();
+
+    getUserLocation();
+
+  }
+
+);
