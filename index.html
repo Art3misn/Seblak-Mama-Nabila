@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    Seblak Prasmanan Mama Nabila
+  </title>
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+
+  <nav class="navbar">
+
+    <div class="logo-box">
+
+      <img
+        src="Seblak.jpg"
+        alt="Logo Seblak"
+        class="logo"
+      >
+
+      <div>
+
+        <h2>SEBLAK</h2>
+
+        <span>PRASMANAN</span>
+
+      </div>
+
+    </div>
+
+    <button
+      id="floatingToggle"
+      class="floating-cart-btn"
+    >
+
+      🛒
+
+      <span id="cartCount">
+        0
+      </span>
+
+    </button>
+
+  </nav>
+
+  <!-- HERO -->
+
+  <section class="hero">
+
+    <div class="hero-left">
+
+      <h1>
+
+        SEBLAK
+        <span>PRASMANAN</span>
+
+      </h1>
+
+      <p>
+
+        Ambil sesukamu,
+        bayar sesuai pilihanmu 🌶️
+
+      </p>
+
+      <a href="#menu">
+
+        <button class="hero-btn">
+
+          Pesan Sekarang
+
+        </button>
+
+      </a>
+
+    </div>
+
+    <div class="hero-right">
+
+      <img
+        src="Seblak 2.png"
+        alt="Seblak"
+        class="hero-image"
+      >
+
+    </div>
+
+  </section>
+
+  <!-- MENU TOPPING -->
+
+  <section
+    class="menu-section"
+    id="menu"
+  >
+
+    <div class="section-title">
+
+      <h2>MENU TOPPING</h2>
+
+      <p>
+        Pilih topping favoritmu 🍜
+      </p>
+
+    </div>
+
+    <div
+      class="menu-grid"
+      id="menuGrid"
+    ></div>
+
+  </section>
+
+  <!-- MENU MINUMAN -->
+
+  <section class="drink-section">
+
+    <div class="section-title">
+
+      <h2>MENU MINUMAN</h2>
+
+      <p>
+        Segerin harimu 🥤
+      </p>
+
+    </div>
+
+    <div
+      class="menu-grid"
+      id="drinkGrid"
+    ></div>
+
+  </section>
+
+  <!-- OVERLAY -->
+
+  <div
+    class="cart-overlay"
+    id="cartOverlay"
+  ></div>
+
+  <!-- CART -->
+
+  <div
+    class="cart-box"
+    id="cartBox"
+  >
+
+    <!-- TOP -->
+
+    <div class="cart-top">
+
+      <h3>Keranjang</h3>
+
+      <button
+        class="close-cart"
+        id="closeCart"
+      >
+
+        ✕
+
+      </button>
+
+    </div>
+
+    <!-- TOTAL ITEM -->
+
+    <span id="totalItem">
+      0 item
+    </span>
+
+    <!-- FORM -->
+
+    <div class="checkout-form">
+
+      <input
+        type="text"
+        id="customerName"
+        placeholder="Nama Pemesan"
+      >
+
+      <input
+        type="tel"
+        id="customerPhone"
+        placeholder="Nomor WhatsApp / HP"
+      >
+
+      <textarea
+        id="customerAddress"
+        placeholder="Alamat Lengkap"
+      ></textarea>
+
+      <!-- PEDAS -->
+
+      <select id="spicyLevel">
+
+        <option value="Original">
+          Original
+        </option>
+
+        <option value="1 Centong">
+          1 Centong
+        </option>
+
+        <option value="2 Centong">
+          2 Centong
+        </option>
+
+        <option value="3 Centong">
+          3 Centong
+        </option>
+
+        <option value="4 Centong">
+          4 Centong
+        </option>
+
+        <option value="5 Centong">
+          5 Centong
+        </option>
+
+      </select>
+
+      <!-- KUAH -->
+
+      <select id="soupType">
+
+        <option value="Nyemek">
+          Nyemek
+        </option>
+
+        <option value="Sedang">
+          Sedang
+        </option>
+
+        <option value="Banyak">
+          Banyak
+        </option>
+
+      </select>
+
+      <!-- RASA -->
+
+      <select id="tasteType">
+
+        <option value="Asin">
+          Asin
+        </option>
+
+        <option value="Manis">
+          Manis
+        </option>
+
+        <option value="Gurih">
+          Gurih
+        </option>
+
+      </select>
+
+    </div>
+
+    <!-- CART ITEMS -->
+
+    <div
+      class="cart-items"
+      id="cartItems"
+    ></div>
+
+    <!-- TOTAL -->
+
+    <div class="cart-total">
+
+      <h2>
+
+        Total:
+        <span id="totalPrice">
+
+          Rp 0
+
+        </span>
+
+      </h2>
+
+      <!-- ONGKIR -->
+
+      <p id="shippingPrice">
+
+        🚚 Ongkir: Rp 0
+
+      </p>
+
+    </div>
+
+    <!-- WARNING -->
+
+    <div id="distanceWarning"></div>
+
+    <!-- BUTTON -->
+
+    <button
+      id="checkoutBtn"
+      class="checkout-btn"
+      onclick="checkoutOrder()"
+    >
+
+      Checkout Sekarang
+
+    </button>
+
+  </div>
+
+  <!-- INFO TOKO -->
+
+  <section class="store-info">
+
+    <div class="section-title">
+
+      <h2>INFO TOKO</h2>
+
+      <p>
+
+        Seblak Prasmanan Mama Nabila
+
+      </p>
+
+    </div>
+
+    <div class="store-grid">
+
+      <!-- TIKTOK -->
+
+      <a
+        href="https://www.tiktok.com/@santinurhs?is_from_webapp=1&sender_device=pc"
+        target="_blank"
+        class="info-card social-card"
+      >
+
+        <div class="info-icon">
+          🎵
+        </div>
+
+        <div>
+
+          <h3>TikTok</h3>
+
+          <p>
+            @Seblak.mamanabila🎀
+          </p>
+
+        </div>
+
+      </a>
+
+      <!-- ALAMAT -->
+
+      <div class="info-card">
+
+        <div class="info-icon">
+          📍
+        </div>
+
+        <div>
+
+          <h3>Alamat</h3>
+
+          <p>
+
+            Jl. Sirnagalih,
+            Kec. Indihiang,
+            Kota Tasikmalaya
+
+          </p>
+
+        </div>
+
+      </div>
+
+      <!-- JAM -->
+
+      <div class="info-card">
+
+        <div class="info-icon">
+          🕒
+        </div>
+
+        <div>
+
+          <h3>Hari & Jam Buka</h3>
+
+          <p>
+
+            Selasa - Minggu
+            <br>
+            12:00 - 22:00
+
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- WARNING TOKO TUTUP -->
+
+  <div
+    id="storeWarning"
+    style="display:none;"
+  >
+
+    Warung Sedang Tutup
+
+  </div>
+
+  <!-- SCRIPT -->
+
+  <script
+    type="module"
+    src="script.js"
+  ></script>
+
+</body>
+
+</html>
