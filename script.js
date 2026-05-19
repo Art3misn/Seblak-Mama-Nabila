@@ -120,7 +120,7 @@ const toppings = [
   },
 
   {
-    name:"Tahu Kering/3pcs",
+    name:"Tahu Kering 3pcs",
     price:2000,
     image:"Tahu Kering.jpeg"
   },
