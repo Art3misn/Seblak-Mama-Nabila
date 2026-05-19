@@ -12,7 +12,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* =========================================
-   TOPPING LENGKAP
+   TOPPING
 ========================================= */
 
 const toppings = [
@@ -194,7 +194,7 @@ const toppings = [
   {
     name:"Tahu Isi",
     price:2000,
-    image:"Tahu IsI.jpeg"
+    image:"Tahu Isi.jpeg"
   },
 
   {
@@ -308,7 +308,7 @@ const toppings = [
 ];
 
 /* =========================================
-   MINUMAN LENGKAP
+   DRINKS
 ========================================= */
 
 const drinks = [
@@ -327,10 +327,11 @@ const drinks = [
 
   { name:"Jasjus Jeruk Peras", price:1000 },
   { name:"Jasjus Lemon", price:1000 },
+
   { name:"Nutrisari Florida Orange", price:4000 },
   { name:"Nutrisari Jeruk Peras", price:4000 },
-  { name:"Pop Ice Cream Cheese", price:2000 },
 
+  { name:"Pop Ice Cream Cheese", price:2000 },
   { name:"Pop Ice Chococheese", price:2000 },
   { name:"Pop Ice Mangga", price:2000 },
   { name:"Pop Ice Avocado", price:2000 },
@@ -347,6 +348,7 @@ const drinks = [
   { name:"Pop Ice Taro", price:2000 },
   { name:"Pop Ice Cookies & Cream", price:2000 },
   { name:"Pop Ice Popcorn Caramel", price:2000 },
+
   { name:"Good day Mocacinno", price:3000 },
 
   { name:"Drink Bang-bang", price:5000 },
@@ -355,794 +357,370 @@ const drinks = [
   { name:"Chocolatos Matcha", price:5000 }
 
 ];
-/* =========================================
-   ELEMENT
-========================================= */
 
-const menuGrid =
-document.getElementById("menuGrid");
+/* =========================
+   ELEMENT (SAFE)
+========================= */
 
-const drinkGrid =
-document.getElementById("drinkGrid");
+const menuGrid = document.getElementById("menuGrid");
+const drinkGrid = document.getElementById("drinkGrid");
+const cartItems = document.getElementById("cartItems");
+const totalPrice = document.getElementById("totalPrice");
+const totalItem = document.getElementById("totalItem");
+const cartCount = document.getElementById("cartCount");
+const checkoutBtn = document.getElementById("checkoutBtn");
 
-const cartItems =
-document.getElementById("cartItems");
+const floatingToggle = document.getElementById("floatingToggle");
+const cartBox = document.getElementById("cartBox");
+const cartOverlay = document.getElementById("cartOverlay");
+const closeCart = document.getElementById("closeCart");
 
-const totalPrice =
-document.getElementById("totalPrice");
-
-const totalItem =
-document.getElementById("totalItem");
-
-const cartCount =
-document.getElementById("cartCount");
-
-const checkoutBtn =
-document.getElementById("checkoutBtn");
-
-const floatingToggle =
-document.getElementById("floatingToggle");
-
-const cartBox =
-document.getElementById("cartBox");
-
-const cartOverlay =
-document.getElementById("cartOverlay");
-
-const closeCart =
-document.getElementById("closeCart");
-
-/* =========================================
-   GLOBAL
-========================================= */
+/* =========================
+   STATE
+========================= */
 
 let cart = [];
-
 let currentDistance = 0;
-
 let userTooFar = false;
+let locationReady = false;
 
-let storeClosed = false;
+/* =========================
+   FIX STORE LOCATION
+========================= */
 
-/* =========================================
-   LOKASI TOKO
-========================================= */
-
-const STORE_LAT = -7.3275;
-const STORE_LNG = 108.2207;
-
+const STORE_LAT = -7.292564;
+const STORE_LNG = 108.208624;
 const MAX_DISTANCE = 15;
 
-/* =========================================
+/* =========================
+   CART OPEN / CLOSE FIX (WAJIB AMAN)
+========================= */
+
+function openCart() {
+  if (cartBox) cartBox.classList.add("active");
+  if (cartOverlay) cartOverlay.classList.add("active");
+}
+
+function closeCartBox() {
+  if (cartBox) cartBox.classList.remove("active");
+  if (cartOverlay) cartOverlay.classList.remove("active");
+}
+
+/* =========================
+   FLOATING BUTTON SAFE BIND
+========================= */
+
+window.addEventListener("DOMContentLoaded", () => {
+
+  if (floatingToggle) {
+    floatingToggle.addEventListener("click", openCart);
+  }
+
+  if (closeCart) {
+    closeCart.addEventListener("click", closeCartBox);
+  }
+
+  if (cartOverlay) {
+    cartOverlay.addEventListener("click", closeCartBox);
+  }
+
+});
+
+/* =========================
+   DISTANCE (FIXED)
+========================= */
+
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1 * Math.PI / 180) *
+    Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) ** 2;
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return R * c;
+}
+
+/* =========================
+   LOCATION
+========================= */
+
+function getUserLocation() {
+
+  locationReady = false;
+  userTooFar = true;
+
+  if (!navigator.geolocation) {
+    locationReady = true;
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition((pos) => {
+
+    const lat = pos.coords.latitude;
+    const lng = pos.coords.longitude;
+
+    currentDistance = calculateDistance(
+      STORE_LAT,
+      STORE_LNG,
+      lat,
+      lng
+    );
+
+    currentDistance = Number(currentDistance.toFixed(1));
+
+    userTooFar = currentDistance > MAX_DISTANCE;
+    locationReady = true;
+
+    updateCart();
+
+  }, () => {
+
+    locationReady = true;
+    userTooFar = true;
+    updateCart();
+
+  }, {
+    enableHighAccuracy: true,
+    timeout: 10000
+  });
+}
+
+/* =========================
+   SHIPPING
+========================= */
+
+function getShippingCost() {
+  if (currentDistance <= 3) return 5000;
+  if (currentDistance <= 6) return 8000;
+  if (currentDistance <= 10) return 10000;
+  if (currentDistance <= 15) return 15000;
+  return 0;
+}
+
+/* =========================
    RENDER MENU
-========================================= */
+========================= */
 
-function renderMenu(){
-
+function renderMenu() {
+  if (!menuGrid) return;
   menuGrid.innerHTML = "";
 
   toppings.forEach((item, index) => {
 
-    const qty =
-    cart.filter(
-      x => x.name === item.name
-    ).length;
+    const qty = cart.filter(x => x.name === item.name).length;
 
-    const card =
-    document.createElement("div");
-
+    const card = document.createElement("div");
     card.className = "card";
 
     card.innerHTML = `
-
-      <img
-        src="${item.image}"
-        alt="${item.name}"
-      >
-
+      <img src="${item.image}">
       <div class="content">
-
         <h3>${item.name}</h3>
-
-        <div class="price">
-          Rp ${item.price.toLocaleString("id-ID")}
-        </div>
+        <div class="price">Rp ${item.price.toLocaleString("id-ID")}</div>
 
         <div class="counter">
-
-          ${
-            item.stock === false
-
-            ?
-
-            `
-              <button
-                disabled
-                style="
-                  width:100%;
-                  background:gray;
-                  opacity:.5;
-                "
-              >
-                Habis
-              </button>
-            `
-
-            :
-
-            `
-
-              <button onclick="minusItem(${index})">
-                -
-              </button>
-
-              <span class="count">
-                ${qty}
-              </span>
-
-              <button onclick="plusItem(${index})">
-                +
-              </button>
-
-            `
-          }
-
+          <button onclick="minusItem(${index})">-</button>
+          <span>${qty}</span>
+          <button onclick="plusItem(${index})">+</button>
         </div>
-
       </div>
-
     `;
 
     menuGrid.appendChild(card);
-
   });
-
 }
 
-/* =========================================
+/* =========================
    RENDER DRINK
-========================================= */
+========================= */
 
-function renderDrinks(){
-
+function renderDrinks() {
+  if (!drinkGrid) return;
   drinkGrid.innerHTML = "";
 
   drinks.forEach((item, index) => {
 
-    const qty =
-    cart.filter(
-      x => x.name === item.name
-    ).length;
+    const qty = cart.filter(x => x.name === item.name).length;
 
-    const card =
-    document.createElement("div");
-
+    const card = document.createElement("div");
     card.className = "card";
 
     card.innerHTML = `
-
       <div class="content">
-
         <h3>${item.name}</h3>
-
-        <div class="price">
-          Rp ${item.price.toLocaleString("id-ID")}
-        </div>
+        <div class="price">Rp ${item.price.toLocaleString("id-ID")}</div>
 
         <div class="counter">
-
-          <button onclick="minusDrink(${index})">
-            -
-          </button>
-
-          <span class="count">
-            ${qty}
-          </span>
-
-          <button onclick="plusDrink(${index})">
-            +
-          </button>
-
+          <button onclick="minusDrink(${index})">-</button>
+          <span>${qty}</span>
+          <button onclick="plusDrink(${index})">+</button>
         </div>
-
       </div>
-
     `;
 
     drinkGrid.appendChild(card);
-
   });
-
 }
 
-/* =========================================
-   BUTTON CART
-========================================= */
+/* =========================
+   CART ACTION
+========================= */
 
-window.plusItem = (index) => {
-
-  if(toppings[index].stock === false)
-  return;
-
-  cart.push(toppings[index]);
-
+window.plusItem = (i) => {
+  cart.push({ ...toppings[i] });
   updateCart();
-
 };
 
-window.minusItem = (index) => {
-
-  const findIndex =
-  cart.findIndex(
-    item =>
-    item.name === toppings[index].name
-  );
-
-  if(findIndex !== -1){
-
-    cart.splice(findIndex, 1);
-
-  }
-
+window.minusItem = (i) => {
+  const idx = cart.findIndex(x => x.name === toppings[i].name);
+  if (idx !== -1) cart.splice(idx, 1);
   updateCart();
-
 };
 
-window.plusDrink = (index) => {
-
-  cart.push(drinks[index]);
-
+window.plusDrink = (i) => {
+  cart.push({ ...drinks[i] });
   updateCart();
-
 };
 
-window.minusDrink = (index) => {
-
-  const findIndex =
-  cart.findIndex(
-    item =>
-    item.name === drinks[index].name
-  );
-
-  if(findIndex !== -1){
-
-    cart.splice(findIndex, 1);
-
-  }
-
+window.minusDrink = (i) => {
+  const idx = cart.findIndex(x => x.name === drinks[i].name);
+  if (idx !== -1) cart.splice(idx, 1);
   updateCart();
-
 };
 
-/* =========================================
-   UPDATE CART
-========================================= */
+/* =========================
+   CART UPDATE
+========================= */
 
-function updateCart(){
+function updateCart() {
+
+  if (!cartItems) return;
 
   cartItems.innerHTML = "";
 
+  let total = 0;
   const grouped = {};
 
-  let total = 0;
-
   cart.forEach(item => {
-
-    if(!grouped[item.name]){
-
-      grouped[item.name] = {
-        qty:0,
-        price:item.price
-      };
-
-    }
-
+    grouped[item.name] = grouped[item.name] || { qty: 0, price: item.price };
     grouped[item.name].qty++;
-
   });
 
   Object.keys(grouped).forEach(name => {
 
     const item = grouped[name];
-
-    const subtotal =
-    item.qty * item.price;
-
+    const subtotal = item.qty * item.price;
     total += subtotal;
 
-    const div =
-    document.createElement("div");
-
-    div.className =
-    "cart-item";
+    const div = document.createElement("div");
+    div.className = "cart-item";
 
     div.innerHTML = `
-
-      <div>
-        <strong>${name}</strong>
-        <p>${item.qty}x</p>
-      </div>
-
-      <strong>
-        Rp ${subtotal.toLocaleString("id-ID")}
-      </strong>
-
+      <strong>${name}</strong>
+      <span>${item.qty}x</span>
+      <b>Rp ${subtotal.toLocaleString("id-ID")}</b>
     `;
 
     cartItems.appendChild(div);
-
   });
 
-  /* ONGKIR */
+  const shipping = getShippingCost();
+  if (!userTooFar) total += shipping;
 
-  const shipping =
-  getShippingCost();
-
-  if(!userTooFar){
-
-    total += shipping;
-
-  }
-
-  /* SHIPPING */
-
-  let shippingBox =
-  document.getElementById("shippingPrice");
-
-  if(!shippingBox){
-
-    shippingBox =
-    document.createElement("p");
-
-    shippingBox.id =
-    "shippingPrice";
-
-    document
-    .querySelector(".cart-total")
-    ?.appendChild(shippingBox);
-
-  }
-
-  if(userTooFar){
-
-    shippingBox.innerHTML =
-    "❌ Diluar Jangkauan";
-
-  }
-
-  else{
-
-    shippingBox.innerHTML =
-    `🚚 Ongkir: Rp ${shipping.toLocaleString("id-ID")}`;
-
-  }
-
-  totalPrice.innerText =
-  `Rp ${total.toLocaleString("id-ID")}`;
-
-  totalItem.innerText =
-  `${cart.length} item`;
-
-  cartCount.innerText =
-  cart.length;
+  totalPrice.innerText = `Rp ${total.toLocaleString("id-ID")}`;
+  totalItem.innerText = `${cart.length} item`;
+  cartCount.innerText = cart.length;
 
   renderMenu();
   renderDrinks();
-
   setCheckoutState();
-
 }
 
-/* =========================================
-   ONGKIR
-========================================= */
+/* =========================
+   CHECKOUT STATE FIX
+========================= */
 
-function getShippingCost(){
+function setCheckoutState() {
 
-  if(currentDistance <= 3){
+  if (!checkoutBtn) return;
 
-    return 10000;
-
-  }
-
-  else if(currentDistance <= 6){
-
-    return 11000;
-
-  }
-
-  else if(currentDistance <= 10){
-
-    return 12000;
-
-  }
-
-  else if(currentDistance <= 15){
-
-    return 13000;
-
-  }
-
-  return 0;
-
-}
-
-/* =========================================
-   CHECKOUT STATE
-========================================= */
-
-function setCheckoutState(){
-
-  if(storeClosed){
-
+  if (!locationReady) {
     checkoutBtn.disabled = true;
-
-    checkoutBtn.innerHTML =
-    "🔒 Warung Tutup";
-
+    checkoutBtn.innerHTML = "📍 Ambil lokasi...";
     return;
-
   }
 
-  if(userTooFar){
-
+  if (userTooFar) {
     checkoutBtn.disabled = true;
-
-    checkoutBtn.innerHTML =
-    "❌ Diluar Jangkauan";
-
+    checkoutBtn.innerHTML = "❌ Diluar Jangkauan";
     return;
-
   }
 
   checkoutBtn.disabled = false;
-
-  checkoutBtn.innerHTML =
-  "🛒 Checkout Sekarang";
-
+  checkoutBtn.innerHTML = "🛒 Checkout Sekarang";
 }
 
-/* =========================================
-   HITUNG JARAK
-========================================= */
-
-function calculateDistance(
-  lat1,
-  lon1,
-  lat2,
-  lon2
-){
-
-  const R = 6371;
-
-  const dLat =
-  (lat2 - lat1) * Math.PI / 180;
-
-  const dLon =
-  (lon2 - lon1) * Math.PI / 180;
-
-  const a =
-
-    Math.sin(dLat / 2) *
-    Math.sin(dLat / 2)
-
-    +
-
-    Math.cos(lat1 * Math.PI / 180) *
-
-    Math.cos(lat2 * Math.PI / 180) *
-
-    Math.sin(dLon / 2) *
-
-    Math.sin(dLon / 2);
-
-  const c =
-  2 * Math.atan2(
-    Math.sqrt(a),
-    Math.sqrt(1 - a)
-  );
-
-  return R * c;
-
-}
-
-/* =========================================
-   GET USER LOCATION
-========================================= */
-
-function getUserLocation(){
-
-  if(!navigator.geolocation){
-
-    alert("GPS tidak didukung");
-
-    return;
-
-  }
-
-  navigator.geolocation.getCurrentPosition(
-
-    (position) => {
-
-      const userLat =
-      position.coords.latitude;
-
-      const userLng =
-      position.coords.longitude;
-
-      currentDistance =
-      calculateDistance(
-        STORE_LAT,
-        STORE_LNG,
-        userLat,
-        userLng
-      );
-
-      console.log(
-        "Jarak:",
-        currentDistance
-      );
-
-      if(currentDistance > MAX_DISTANCE){
-
-        userTooFar = true;
-
-      }
-
-      else{
-
-        userTooFar = false;
-
-      }
-
-      const warning =
-      document.getElementById(
-        "distanceWarning"
-      );
-
-      if(warning){
-
-        if(userTooFar){
-
-          warning.style.display =
-          "block";
-
-          warning.innerHTML = `
-
-            ❌ Diluar Jangkauan
-            <br><br>
-
-            Jarak kamu:
-            ${currentDistance.toFixed(1)} KM
-
-          `;
-
-        }
-
-        else{
-
-          warning.style.display =
-          "none";
-
-        }
-
-      }
-
-      updateCart();
-
-    },
-
-    (error) => {
-
-      console.log(error);
-
-      alert(
-        "Izinkan akses lokasi"
-      );
-
-    },
-
-    {
-      enableHighAccuracy:true
-    }
-
-  );
-
-}
-
-/* =========================================
+/* =========================
    CHECKOUT
-========================================= */
+========================= */
 
 window.checkoutOrder = async () => {
 
-  if(userTooFar){
+  if (!locationReady) {
+    alert("Tunggu lokasi dulu");
+    return;
+  }
 
+  if (userTooFar) {
     alert("Diluar jangkauan");
-
     return;
-
   }
 
-  if(storeClosed){
+  const name = document.getElementById("customerName").value;
+  const phone = document.getElementById("customerPhone").value;
+  const address = document.getElementById("customerAddress").value;
 
-    alert("Warung tutup");
-
-    return;
-
-  }
-
-  const customerName =
-  document.getElementById("customerName").value;
-
-  const customerPhone =
-  document.getElementById("customerPhone").value;
-
-  const customerAddress =
-  document.getElementById("customerAddress").value;
-
-  if(!customerName ||
-     !customerPhone ||
-     !customerAddress){
-
+  if (!name || !phone || !address) {
     alert("Lengkapi data");
-
     return;
-
   }
 
-  if(cart.length === 0){
-
-    alert("Keranjang kosong");
-
-    return;
-
-  }
+  const shipping = getShippingCost();
 
   const total =
-  cart.reduce(
-    (sum, item) =>
-    sum + item.price,
-    0
-  );
+    cart.reduce((a, b) => a + b.price, 0) + shipping;
 
-  try{
-
-    await addDoc(
-
-      collection(db, "orders"),
-
-      {
-
-        customerName,
-        customerPhone,
-        customerAddress,
-
-        items: cart,
-
-        total,
-
-        status: "Menunggu",
-
-        createdAt: new Date()
-
-      }
-
-    );
-
-    alert("Pesanan berhasil!");
-
-    cart = [];
-
-    updateCart();
-
-  }
-
-  catch(error){
-
-    console.log(error);
-
-    alert("Firebase Error");
-
-  }
-
-};
-
-/* =========================================
-   REALTIME STOCK
-========================================= */
-
-function syncStocksRealtime(){
-
-  toppings.forEach((item) => {
-
-    const stockRef =
-    doc(db, "stocks", item.name);
-
-    onSnapshot(
-
-      stockRef,
-
-      (snap) => {
-
-        if(snap.exists()){
-
-          item.stock =
-          snap.data().available;
-
-        }
-
-        else{
-
-          item.stock = true;
-
-        }
-
-        renderMenu();
-
-      }
-
-    );
-
+  await addDoc(collection(db, "orders"), {
+    customerName: name,
+    customerPhone: phone,
+    customerAddress: address,
+    items: cart,
+    shipping,
+    distance: currentDistance,
+    total,
+    createdAt: new Date()
   });
 
-}
+  alert("Pesanan berhasil!");
 
-/* =========================================
-   FLOATING CART
-========================================= */
+  cart = [];
+  updateCart();
+};
 
-function openCartBox(){
-
-  cartBox.classList.add("active");
-
-  cartOverlay.classList.add("active");
-
-}
-
-function closeCartBox(){
-
-  cartBox.classList.remove("active");
-
-  cartOverlay.classList.remove("active");
-
-}
-
-floatingToggle.addEventListener(
-  "click",
-  openCartBox
-);
-
-closeCart.addEventListener(
-  "click",
-  closeCartBox
-);
-
-cartOverlay.addEventListener(
-  "click",
-  closeCartBox
-);
-
-/* =========================================
+/* =========================
    START APP
-========================================= */
+========================= */
 
-window.addEventListener(
-
-  "DOMContentLoaded",
-
-  () => {
-
-    renderMenu();
-
-    renderDrinks();
-
-    updateCart();
-
-    syncStocksRealtime();
-
-    getUserLocation();
-
-  }
-
-);
+window.addEventListener("DOMContentLoaded", () => {
+  renderMenu();
+  renderDrinks();
+  updateCart();
+  getUserLocation();
+});
