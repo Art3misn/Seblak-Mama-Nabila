@@ -659,16 +659,16 @@ function getUserLocation(){
 function getShippingCost(){
 
   if(currentDistance <= 3)
-  return 12000;
+  return 7000;
 
   if(currentDistance <= 6)
-  return 24000;
+  return 12000;
 
   if(currentDistance <= 10)
-  return 36000;
+  return 18000;
 
   if(currentDistance <= 15)
-  return 48000;
+  return 25000;
 
   return 0;
 
