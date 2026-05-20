@@ -195,7 +195,7 @@ const toppings = [
   {
     name:"Tahu Isi",
     price:2000,
-    image:"Tahu Isi.jpeg"
+    image:"Tahu IsI.jpeg"
   },
 
   {
