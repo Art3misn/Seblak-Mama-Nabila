@@ -7,7 +7,7 @@
 
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
   >
 
   <title>
@@ -23,7 +23,9 @@
 
 <body>
 
-  <!-- NAVBAR -->
+  <!-- =========================================
+       NAVBAR
+  ========================================= -->
 
   <nav class="navbar">
 
@@ -45,9 +47,12 @@
 
     </div>
 
+    <!-- FLOATING CART BUTTON -->
+
     <button
       id="floatingToggle"
       class="floating-cart-btn"
+      aria-label="Buka Keranjang"
     >
 
       🛒
@@ -60,7 +65,9 @@
 
   </nav>
 
-  <!-- HERO -->
+  <!-- =========================================
+       HERO
+  ========================================= -->
 
   <section class="hero">
 
@@ -104,7 +111,9 @@
 
   </section>
 
-  <!-- MENU TOPPING -->
+  <!-- =========================================
+       MENU TOPPING
+  ========================================= -->
 
   <section
     class="menu-section"
@@ -128,7 +137,9 @@
 
   </section>
 
-  <!-- MENU MINUMAN -->
+  <!-- =========================================
+       MENU MINUMAN
+  ========================================= -->
 
   <section class="drink-section">
 
@@ -149,19 +160,27 @@
 
   </section>
 
-  <!-- OVERLAY -->
+  <!-- =========================================
+       OVERLAY
+  ========================================= -->
 
   <div
     class="cart-overlay"
     id="cartOverlay"
   ></div>
 
-  <!-- CART -->
+  <!-- =========================================
+       CART BOX
+  ========================================= -->
 
   <div
     class="cart-box"
     id="cartBox"
   >
+
+    <!-- HANDLE MOBILE -->
+
+    <div class="cart-handle"></div>
 
     <!-- TOP -->
 
@@ -186,7 +205,9 @@
       0 item
     </span>
 
-    <!-- FORM -->
+    <!-- =========================================
+         FORM
+    ========================================= -->
 
     <div class="checkout-form">
 
@@ -275,14 +296,18 @@
 
     </div>
 
-    <!-- CART ITEMS -->
+    <!-- =========================================
+         CART ITEMS
+    ========================================= -->
 
     <div
       class="cart-items"
       id="cartItems"
     ></div>
 
-    <!-- TOTAL -->
+    <!-- =========================================
+         TOTAL
+    ========================================= -->
 
     <div class="cart-total">
 
@@ -307,25 +332,35 @@
 
     </div>
 
-    <!-- WARNING -->
+    <!-- =========================================
+         WARNING
+    ========================================= -->
 
     <div id="distanceWarning"></div>
 
-    <!-- BUTTON -->
+    <!-- =========================================
+         BUTTON
+    ========================================= -->
 
-    <button
-      id="checkoutBtn"
-      class="checkout-btn"
-      onclick="checkoutOrder()"
-    >
+    <div class="cart-bottom">
 
-      Checkout Sekarang
+      <button
+        id="checkoutBtn"
+        class="checkout-btn"
+        onclick="checkoutOrder()"
+      >
 
-    </button>
+        Checkout Sekarang
+
+      </button>
+
+    </div>
 
   </div>
 
-  <!-- INFO TOKO -->
+  <!-- =========================================
+       INFO TOKO
+  ========================================= -->
 
   <section class="store-info">
 
@@ -419,7 +454,9 @@
 
   </section>
 
-  <!-- WARNING TOKO TUTUP -->
+  <!-- =========================================
+       WARNING TOKO TUTUP
+  ========================================= -->
 
   <div
     id="storeWarning"
@@ -430,7 +467,149 @@
 
   </div>
 
-  <!-- SCRIPT -->
+  <!-- =========================================
+       MOBILE CART SCRIPT
+  ========================================= -->
+
+  <script>
+
+    const cartBox =
+      document.getElementById("cartBox");
+
+    const cartOverlay =
+      document.getElementById("cartOverlay");
+
+    const floatingToggle =
+      document.getElementById("floatingToggle");
+
+    const closeCart =
+      document.getElementById("closeCart");
+
+    /* =========================================
+       OPEN CART
+    ========================================= */
+
+    floatingToggle.addEventListener(
+      "click",
+      () => {
+
+        cartBox.classList.add("active");
+        cartOverlay.classList.add("active");
+
+      }
+    );
+
+    /* =========================================
+       CLOSE CART
+    ========================================= */
+
+    function closeCartBox(){
+
+      cartBox.classList.remove("active");
+      cartOverlay.classList.remove("active");
+
+    }
+
+    closeCart.addEventListener(
+      "click",
+      closeCartBox
+    );
+
+    cartOverlay.addEventListener(
+      "click",
+      closeCartBox
+    );
+
+    /* =========================================
+       SWIPE DOWN CLOSE
+    ========================================= */
+
+    let startY = 0;
+    let currentY = 0;
+    let isDragging = false;
+
+    cartBox.addEventListener(
+
+      "touchstart",
+
+      (e) => {
+
+        startY =
+          e.touches[0].clientY;
+
+        isDragging = true;
+
+      },
+
+      { passive:true }
+
+    );
+
+    cartBox.addEventListener(
+
+      "touchmove",
+
+      (e) => {
+
+        if(!isDragging) return;
+
+        currentY =
+          e.touches[0].clientY;
+
+        const diff =
+          currentY - startY;
+
+        if(diff > 0){
+
+          cartBox.style.transition =
+            "none";
+
+          cartBox.style.transform =
+            `translateY(${diff}px)`;
+
+        }
+
+      },
+
+      { passive:true }
+
+    );
+
+    cartBox.addEventListener(
+
+      "touchend",
+
+      () => {
+
+        isDragging = false;
+
+        const diff =
+          currentY - startY;
+
+        cartBox.style.transition =
+          "transform .3s ease";
+
+        if(diff > 120){
+
+          closeCartBox();
+
+          cartBox.style.transform = "";
+
+        }else{
+
+          cartBox.style.transform = "";
+
+        }
+
+      }
+
+    );
+
+  </script>
+
+  <!-- =========================================
+       MAIN SCRIPT
+  ========================================= -->
 
   <script
     type="module"
