@@ -395,6 +395,12 @@ document.getElementById("cartOverlay");
 const closeCart =
 document.getElementById("closeCart");
 
+const shippingPrice =
+document.getElementById("shippingPrice");
+
+const distanceWarning =
+document.getElementById("distanceWarning");
+
 /* =========================================
    STATE
 ========================================= */
@@ -438,6 +444,7 @@ onSnapshot(
     data?.closed || false;
 
     setCheckoutState();
+
     renderMenu();
 
   }
@@ -458,7 +465,9 @@ onSnapshot(
 
     snapshot.forEach((docSnap)=>{
 
-      stockRealtime[docSnap.id] =
+      stockRealtime[
+        docSnap.id
+      ] =
       docSnap.data().available;
 
     });
@@ -470,7 +479,7 @@ onSnapshot(
 );
 
 /* =========================================
-   CART OPEN CLOSE
+   OPEN CLOSE CART
 ========================================= */
 
 function openCart(){
@@ -483,6 +492,9 @@ function openCart(){
     "active"
   );
 
+  document.body.style.overflow =
+  "hidden";
+
 }
 
 function closeCartBox(){
@@ -494,6 +506,9 @@ function closeCartBox(){
   cartOverlay?.classList.remove(
     "active"
   );
+
+  document.body.style.overflow =
+  "auto";
 
 }
 
@@ -580,6 +595,7 @@ function getUserLocation(){
   if(!navigator.geolocation){
 
     locationReady = true;
+
     return;
 
   }
@@ -628,10 +644,8 @@ function getUserLocation(){
     },
 
     {
-
       enableHighAccuracy:true,
       timeout:10000
-
     }
 
   );
@@ -688,7 +702,11 @@ function renderMenu(){
 
     card.innerHTML = `
 
-      <img src="${item.image}">
+      <img
+        src="${item.image}"
+        alt="${item.name}"
+        loading="lazy"
+      >
 
       <div class="content">
 
@@ -952,7 +970,9 @@ function updateCart(){
 
     div.innerHTML = `
 
-      <strong>${name}</strong>
+      <strong>
+        ${name}
+      </strong>
 
       <span>
         ${item.qty}x
@@ -991,7 +1011,37 @@ function updateCart(){
   cartCount.innerText =
   cart.length;
 
+  if(shippingPrice){
+
+    shippingPrice.innerHTML =
+
+    userTooFar
+    ? "❌ Diluar jangkauan"
+    : `🚚 Ongkir: Rp ${shipping.toLocaleString("id-ID")}`;
+
+  }
+
+  if(distanceWarning){
+
+    if(userTooFar){
+
+      distanceWarning.style.display =
+      "block";
+
+      distanceWarning.innerHTML =
+      `Maaf, lokasi kamu diluar jangkauan maksimal ${MAX_DISTANCE} KM`;
+
+    }else{
+
+      distanceWarning.style.display =
+      "none";
+
+    }
+
+  }
+
   renderMenu();
+
   renderDrinks();
 
   setCheckoutState();
@@ -1087,6 +1137,16 @@ async()=>{
 
   }
 
+  if(cart.length <= 0){
+
+    alert(
+      "Keranjang masih kosong"
+    );
+
+    return;
+
+  }
+
   const name =
   document.getElementById(
     "customerName"
@@ -1100,6 +1160,21 @@ async()=>{
   const address =
   document.getElementById(
     "customerAddress"
+  ).value;
+
+  const spicyLevel =
+  document.getElementById(
+    "spicyLevel"
+  ).value;
+
+  const soupType =
+  document.getElementById(
+    "soupType"
+  ).value;
+
+  const tasteType =
+  document.getElementById(
+    "tasteType"
   ).value;
 
   if(
@@ -1128,46 +1203,99 @@ async()=>{
 
     shipping;
 
-  await addDoc(
+  checkoutBtn.disabled = true;
 
-    collection(
-      db,
-      "orders"
-    ),
+  checkoutBtn.innerHTML =
+  "⏳ Mengirim...";
 
-    {
+  try{
 
-      customerName:name,
-      customerPhone:phone,
-      customerAddress:address,
+    await addDoc(
 
-      items:cart,
+      collection(
+        db,
+        "orders"
+      ),
 
-      shipping,
+      {
 
-      distance:
-      currentDistance,
+        customerName:name,
+        customerPhone:phone,
+        customerAddress:address,
 
-      total,
+        spicyLevel,
+        soupType,
+        tasteType,
 
-      status:"Menunggu",
+        items:cart,
 
-      createdAt:
-      new Date()
+        shipping,
 
-    }
+        distance:
+        currentDistance,
 
-  );
+        total,
 
-  alert(
-    "Pesanan berhasil!"
-  );
+        status:"Menunggu",
 
-  cart = [];
+        createdAt:
+        new Date()
 
-  updateCart();
+      }
+
+    );
+
+    alert(
+      "Pesanan berhasil!"
+    );
+
+    cart = [];
+
+    document.getElementById(
+      "customerName"
+    ).value = "";
+
+    document.getElementById(
+      "customerPhone"
+    ).value = "";
+
+    document.getElementById(
+      "customerAddress"
+    ).value = "";
+
+    updateCart();
+
+    closeCartBox();
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Gagal mengirim pesanan"
+    );
+
+  }
+
+  setCheckoutState();
 
 };
+
+/* =========================================
+   IOS TOUCH FIX
+========================================= */
+
+document.addEventListener(
+
+  "touchstart",
+
+  ()=>{},
+
+  {
+    passive:true
+  }
+
+);
 
 /* =========================================
    START APP
