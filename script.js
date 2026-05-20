@@ -165,7 +165,7 @@ const toppings = [
   {
     name:"Telur Puyuh",
     price:1000,
-    image:"Telur Puyuh.jpeg"
+    image:"Telur Puyuh 1.jpeg"
   },
 
   {
