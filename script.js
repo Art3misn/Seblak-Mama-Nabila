@@ -43,7 +43,7 @@ const toppings = [
   },
 
   {
-    name:"Dimsum",
+    name:"Dimsum Aci",
     price:1000,
     image:"Dimsum.jpeg"
   },
@@ -55,7 +55,7 @@ const toppings = [
   },
 
   {
-    name:"Somay Basah",
+    name:"Pangsit Basah",
     price:1000,
     image:"Somay Basah.jpeg"
   },
@@ -181,7 +181,7 @@ const toppings = [
   },
 
   {
-    name:"Cilok",
+    name:"Cilok Gajih",
     price:1000,
     image:"Cilok.jpeg"
   },
@@ -253,7 +253,7 @@ const toppings = [
   },
 
   {
-    name:"Tofu",
+    name:"Seafood Tofu",
     price:2000,
     image:"Tofu.jpeg"
   },
