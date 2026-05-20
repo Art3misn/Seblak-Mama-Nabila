@@ -24,7 +24,7 @@ const toppings = [
   },
 
   {
-    name:"Somay Kering",
+    name:"Cuanki",
     price:1000,
     image:"Somay Kering.jpeg"
   },
@@ -36,7 +36,7 @@ const toppings = [
   },
 
   {
-    name:"Bakso Aci",
+    name:"Cirawang",
     price:1000,
     image:"Bakso Aci.jpeg"
   },
@@ -54,9 +54,9 @@ const toppings = [
   },
 
   {
-    name:"Somay Basah",
+    name:"Pangsit Basah",
     price:1000,
-    image:"Somay Basah.jpeg"
+    image:"Pangsit Basah.jpeg"
   },
 
   {
@@ -80,7 +80,7 @@ const toppings = [
   {
     name:"Makaroni",
     price:1000,
-    image:"Makaroni.jpeg"
+    image:"Makaroni Kuning.jpeg"
   },
 
   {
@@ -164,7 +164,7 @@ const toppings = [
   {
     name:"Telur Puyuh",
     price:1000,
-    image:"Telur Puyuh.jpeg"
+    image:"Telur Puyuh 1.jpeg"
   },
 
   {
@@ -180,7 +180,7 @@ const toppings = [
   },
 
   {
-    name:"Cilok",
+    name:"Cilok Gajih",
     price:1000,
     image:"Cilok.jpeg"
   },
@@ -192,9 +192,9 @@ const toppings = [
   },
 
   {
-    name:"Tahu Isi",
+    name:"Tahu Bakso",
     price:2000,
-    image:"Tahu IsI.jpeg"
+    image:"Tahu Bakso.jpeg"
   },
 
   {
@@ -252,9 +252,9 @@ const toppings = [
   },
 
   {
-    name:"Tofu",
+    name:"Seafood Tofu",
     price:2000,
-    image:"Tofu.jpeg"
+    image:"Seafood Tofu.jpeg"
   },
 
   {
