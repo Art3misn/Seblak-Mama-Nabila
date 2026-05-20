@@ -42,7 +42,7 @@ const toppings = [
   },
 
   {
-    name:"Dimsum",
+    name:"Dimsum Aci",
     price:1000,
     image:"Dimsum.jpeg"
   },
