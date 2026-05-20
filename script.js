@@ -1,5 +1,6 @@
 /* =========================================
    SEBLAK PRASMANAN - CUSTOMER FULL SCRIPT
+   MOBILE IOS + ANDROID FLEXIBLE VERSION
 ========================================= */
 
 import { db } from "./firebase.js";
@@ -24,7 +25,7 @@ const toppings = [
   },
 
   {
-    name:"Cuanki",
+    name:"Somay Kering",
     price:1000,
     image:"Somay Kering.jpeg"
   },
@@ -36,13 +37,13 @@ const toppings = [
   },
 
   {
-    name:"Cirawang",
+    name:"Bakso Aci",
     price:1000,
     image:"Bakso Aci.jpeg"
   },
 
   {
-    name:"Dimsum Aci",
+    name:"Dimsum",
     price:1000,
     image:"Dimsum.jpeg"
   },
@@ -54,9 +55,9 @@ const toppings = [
   },
 
   {
-    name:"Pangsit Basah",
+    name:"Somay Basah",
     price:1000,
-    image:"Pangsit Basah.jpeg"
+    image:"Somay Basah.jpeg"
   },
 
   {
@@ -80,7 +81,7 @@ const toppings = [
   {
     name:"Makaroni",
     price:1000,
-    image:"Makaroni Kuning.jpeg"
+    image:"Makaroni.jpeg"
   },
 
   {
@@ -164,7 +165,7 @@ const toppings = [
   {
     name:"Telur Puyuh",
     price:1000,
-    image:"Telur Puyuh 1.jpeg"
+    image:"Telur Puyuh.jpeg"
   },
 
   {
@@ -180,7 +181,7 @@ const toppings = [
   },
 
   {
-    name:"Cilok Gajih",
+    name:"Cilok",
     price:1000,
     image:"Cilok.jpeg"
   },
@@ -192,9 +193,9 @@ const toppings = [
   },
 
   {
-    name:"Tahu Bakso",
+    name:"Tahu Isi",
     price:2000,
-    image:"Tahu Bakso.jpeg"
+    image:"Tahu Isi.jpeg"
   },
 
   {
@@ -252,9 +253,9 @@ const toppings = [
   },
 
   {
-    name:"Seafood Tofu",
+    name:"Tofu",
     price:2000,
-    image:"Seafood Tofu.jpeg"
+    image:"Tofu.jpeg"
   },
 
   {
@@ -395,12 +396,6 @@ document.getElementById("cartOverlay");
 const closeCart =
 document.getElementById("closeCart");
 
-const shippingPrice =
-document.getElementById("shippingPrice");
-
-const distanceWarning =
-document.getElementById("distanceWarning");
-
 /* =========================================
    STATE
 ========================================= */
@@ -444,7 +439,6 @@ onSnapshot(
     data?.closed || false;
 
     setCheckoutState();
-
     renderMenu();
 
   }
@@ -465,9 +459,7 @@ onSnapshot(
 
     snapshot.forEach((docSnap)=>{
 
-      stockRealtime[
-        docSnap.id
-      ] =
+      stockRealtime[docSnap.id] =
       docSnap.data().available;
 
     });
@@ -479,7 +471,7 @@ onSnapshot(
 );
 
 /* =========================================
-   OPEN CLOSE CART
+   CART OPEN
 ========================================= */
 
 function openCart(){
@@ -497,6 +489,10 @@ function openCart(){
 
 }
 
+/* =========================================
+   CART CLOSE
+========================================= */
+
 function closeCartBox(){
 
   cartBox?.classList.remove(
@@ -511,6 +507,10 @@ function closeCartBox(){
   "auto";
 
 }
+
+/* =========================================
+   EVENT
+========================================= */
 
 window.addEventListener(
 
@@ -532,6 +532,91 @@ window.addEventListener(
       "click",
       closeCartBox
     );
+
+  }
+
+);
+
+/* =========================================
+   SWIPE DOWN CLOSE
+========================================= */
+
+let startY = 0;
+let currentY = 0;
+let isDragging = false;
+
+cartBox?.addEventListener(
+
+  "touchstart",
+
+  (e)=>{
+
+    startY =
+    e.touches[0].clientY;
+
+    isDragging = true;
+
+  },
+
+  { passive:true }
+
+);
+
+cartBox?.addEventListener(
+
+  "touchmove",
+
+  (e)=>{
+
+    if(!isDragging) return;
+
+    currentY =
+    e.touches[0].clientY;
+
+    const diff =
+    currentY - startY;
+
+    if(diff > 0){
+
+      cartBox.style.transition =
+      "none";
+
+      cartBox.style.transform =
+      `translateY(${diff}px)`;
+
+    }
+
+  },
+
+  { passive:true }
+
+);
+
+cartBox?.addEventListener(
+
+  "touchend",
+
+  ()=>{
+
+    isDragging = false;
+
+    const diff =
+    currentY - startY;
+
+    cartBox.style.transition =
+    "transform .3s ease";
+
+    if(diff > 120){
+
+      closeCartBox();
+
+      cartBox.style.transform = "";
+
+    }else{
+
+      cartBox.style.transform = "";
+
+    }
 
   }
 
@@ -595,7 +680,6 @@ function getUserLocation(){
   if(!navigator.geolocation){
 
     locationReady = true;
-
     return;
 
   }
@@ -644,8 +728,10 @@ function getUserLocation(){
     },
 
     {
+
       enableHighAccuracy:true,
       timeout:10000
+
     }
 
   );
@@ -659,16 +745,16 @@ function getUserLocation(){
 function getShippingCost(){
 
   if(currentDistance <= 3)
-  return 7000;
+  return 5000;
 
   if(currentDistance <= 6)
-  return 12000;
+  return 8000;
 
   if(currentDistance <= 10)
-  return 18000;
+  return 10000;
 
   if(currentDistance <= 15)
-  return 25000;
+  return 15000;
 
   return 0;
 
@@ -702,11 +788,7 @@ function renderMenu(){
 
     card.innerHTML = `
 
-      <img
-        src="${item.image}"
-        alt="${item.name}"
-        loading="lazy"
-      >
+      <img src="${item.image}">
 
       <div class="content">
 
@@ -970,9 +1052,7 @@ function updateCart(){
 
     div.innerHTML = `
 
-      <strong>
-        ${name}
-      </strong>
+      <strong>${name}</strong>
 
       <span>
         ${item.qty}x
@@ -1011,37 +1091,25 @@ function updateCart(){
   cartCount.innerText =
   cart.length;
 
-  if(shippingPrice){
+  const shippingText =
+  document.getElementById(
+    "shippingPrice"
+  );
 
-    shippingPrice.innerHTML =
+  if(shippingText){
+
+    shippingText.innerHTML =
 
     userTooFar
-    ? "❌ Diluar jangkauan"
-    : `🚚 Ongkir: Rp ${shipping.toLocaleString("id-ID")}`;
 
-  }
+    ? "❌ Diluar Jangkauan"
 
-  if(distanceWarning){
-
-    if(userTooFar){
-
-      distanceWarning.style.display =
-      "block";
-
-      distanceWarning.innerHTML =
-      `Maaf, lokasi kamu diluar jangkauan maksimal ${MAX_DISTANCE} KM`;
-
-    }else{
-
-      distanceWarning.style.display =
-      "none";
-
-    }
+    : `🚚 Ongkir: Rp ${shipping
+      .toLocaleString("id-ID")}`;
 
   }
 
   renderMenu();
-
   renderDrinks();
 
   setCheckoutState();
@@ -1104,6 +1172,10 @@ function setCheckoutState(){
    CHECKOUT
 ========================================= */
 
+/* =========================================
+   CHECKOUT
+========================================= */
+
 window.checkoutOrder =
 async()=>{
 
@@ -1140,7 +1212,7 @@ async()=>{
   if(cart.length <= 0){
 
     alert(
-      "Keranjang masih kosong"
+      "Keranjang kosong"
     );
 
     return;
@@ -1177,6 +1249,11 @@ async()=>{
     "tasteType"
   ).value;
 
+  const orderNote =
+  document.getElementById(
+    "orderNote"
+  ).value;
+
   if(
     !name ||
     !phone ||
@@ -1203,11 +1280,6 @@ async()=>{
 
     shipping;
 
-  checkoutBtn.disabled = true;
-
-  checkoutBtn.innerHTML =
-  "⏳ Mengirim...";
-
   try{
 
     await addDoc(
@@ -1220,12 +1292,26 @@ async()=>{
       {
 
         customerName:name,
+
         customerPhone:phone,
+
         customerAddress:address,
 
-        spicyLevel,
-        soupType,
-        tasteType,
+        spicyLevel:
+
+        spicyLevel || "Normal",
+
+        soupType:
+
+        soupType || "Berkuah",
+
+        tasteType:
+
+        tasteType || "Original",
+
+        note:
+
+        orderNote || "",
 
         items:cart,
 
@@ -1251,51 +1337,27 @@ async()=>{
 
     cart = [];
 
-    document.getElementById(
-      "customerName"
-    ).value = "";
-
-    document.getElementById(
-      "customerPhone"
-    ).value = "";
-
-    document.getElementById(
-      "customerAddress"
-    ).value = "";
-
     updateCart();
 
     closeCartBox();
 
-  }catch(error){
+    document.getElementById(
+      "orderNote"
+    ).value = "";
+
+  }
+
+  catch(error){
 
     console.error(error);
 
     alert(
-      "Gagal mengirim pesanan"
+      "Gagal checkout"
     );
 
   }
 
-  setCheckoutState();
-
 };
-
-/* =========================================
-   IOS TOUCH FIX
-========================================= */
-
-document.addEventListener(
-
-  "touchstart",
-
-  ()=>{},
-
-  {
-    passive:true
-  }
-
-);
 
 /* =========================================
    START APP
@@ -1318,3 +1380,25 @@ window.addEventListener(
   }
 
 );
+/* =========================
+   AMBIL CATATAN
+========================= */
+
+const orderNote = document.getElementById("orderNote");
+
+/* CONTOH SAAT CHECKOUT */
+
+checkoutBtn.addEventListener("click", () => {
+
+  const note = orderNote.value;
+
+  const orderData = {
+
+    cart,
+    note
+
+  };
+
+  console.log(orderData);
+
+});
