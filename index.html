@@ -170,34 +170,36 @@
   ></div>
 
   <!-- =========================================
-       CART BOX
-  ========================================= -->
+     CART BOX
+========================================= -->
 
-  <div
-    class="cart-box"
-    id="cartBox"
-  >
+<div
+  class="cart-box"
+  id="cartBox"
+>
 
-    <!-- HANDLE MOBILE -->
+  <!-- HANDLE -->
 
-    <div class="cart-handle"></div>
+  <div class="cart-handle"></div>
 
-    <!-- TOP -->
+  <!-- TOP -->
 
-    <div class="cart-top">
+  <div class="cart-top">
 
-      <h3>Keranjang</h3>
+    <h3>Keranjang</h3>
 
-      <button
-        class="close-cart"
-        id="closeCart"
-      >
+    <button
+      class="close-cart"
+      id="closeCart"
+    >
+      ✕
+    </button>
 
-        ✕
+  </div>
 
-      </button>
+  <!-- CONTENT -->
 
-    </div>
+  <div class="cart-content">
 
     <!-- TOTAL ITEM -->
 
@@ -205,9 +207,14 @@
       0 item
     </span>
 
-    <!-- =========================================
-         FORM
-    ========================================= -->
+    <!-- CART ITEMS -->
+
+    <div
+      class="cart-items"
+      id="cartItems"
+    ></div>
+
+    <!-- FORM -->
 
     <div class="checkout-form">
 
@@ -227,6 +234,26 @@
         id="customerAddress"
         placeholder="Alamat Lengkap"
       ></textarea>
+
+      <!-- CATATAN -->
+
+      <div class="cart-note">
+
+        <label>
+          Catatan Pesanan
+        </label>
+
+        <textarea
+          id="orderNote"
+          placeholder="
+Contoh:
+- jangan pedas
+- kuah dipisah
+- banyakin kerupuk
+"
+        ></textarea>
+
+      </div>
 
       <!-- PEDAS -->
 
@@ -294,69 +321,50 @@
 
       </select>
 
-    </div>
+      <!-- WARNING -->
 
-    <!-- =========================================
-         CART ITEMS
-    ========================================= -->
-
-    <div
-      class="cart-items"
-      id="cartItems"
-    ></div>
-
-    <!-- =========================================
-         TOTAL
-    ========================================= -->
-
-    <div class="cart-total">
-
-      <h2>
-
-        Total:
-        <span id="totalPrice">
-
-          Rp 0
-
-        </span>
-
-      </h2>
-
-      <!-- ONGKIR -->
-
-      <p id="shippingPrice">
-
-        🚚 Ongkir: Rp 5000
-
-      </p>
-
-    </div>
-
-    <!-- =========================================
-         WARNING
-    ========================================= -->
-
-    <div id="distanceWarning"></div>
-
-    <!-- =========================================
-         BUTTON
-    ========================================= -->
-
-    <div class="cart-bottom">
-
-      <button
-        id="checkoutBtn"
-        class="checkout-btn"
-        onclick="checkoutOrder()"
-      >
-
-        Checkout Sekarang
-
-      </button>
+      <div id="distanceWarning"></div>
 
     </div>
 
   </div>
+
+  <!-- TOTAL FIXED -->
+
+  <div class="cart-total">
+
+    <h2>
+
+      Total:
+      <span id="totalPrice">
+        Rp 0
+      </span>
+
+    </h2>
+
+    <!-- ONGKIR -->
+
+    <p id="shippingPrice">
+
+      🚚 Ongkir: Rp 5000
+
+    </p>
+
+    <!-- BUTTON -->
+
+    <button
+      id="checkoutBtn"
+      class="checkout-btn"
+      onclick="checkoutOrder()"
+    >
+
+      Checkout Sekarang
+
+    </button>
+
+  </div>
+
+</div>
 
   <!-- =========================================
        INFO TOKO
