@@ -23,9 +23,7 @@
 
 <body>
 
-  <!-- =========================================
-       NAVBAR
-  ========================================= -->
+  <!-- NAVBAR -->
 
   <nav class="navbar">
 
@@ -47,8 +45,6 @@
 
     </div>
 
-    <!-- FLOATING CART BUTTON -->
-
     <button
       id="floatingToggle"
       class="floating-cart-btn"
@@ -65,9 +61,7 @@
 
   </nav>
 
-  <!-- =========================================
-       HERO
-  ========================================= -->
+  <!-- HERO -->
 
   <section class="hero">
 
@@ -111,9 +105,7 @@
 
   </section>
 
-  <!-- =========================================
-       MENU TOPPING
-  ========================================= -->
+  <!-- MENU -->
 
   <section
     class="menu-section"
@@ -137,9 +129,7 @@
 
   </section>
 
-  <!-- =========================================
-       MENU MINUMAN
-  ========================================= -->
+  <!-- MINUMAN -->
 
   <section class="drink-section">
 
@@ -160,215 +150,237 @@
 
   </section>
 
-  <!-- =========================================
-       OVERLAY
-  ========================================= -->
+  <!-- OVERLAY -->
 
   <div
     class="cart-overlay"
     id="cartOverlay"
   ></div>
 
-  <!-- =========================================
-     CART BOX
-========================================= -->
+  <!-- CART -->
 
-<div
-  class="cart-box"
-  id="cartBox"
->
+  <div
+    class="cart-box"
+    id="cartBox"
+  >
 
-  <!-- HANDLE -->
+    <div class="cart-handle"></div>
 
-  <div class="cart-handle"></div>
+    <div class="cart-top">
 
-  <!-- TOP -->
+      <h3>Keranjang</h3>
 
-  <div class="cart-top">
-
-    <h3>Keranjang</h3>
-
-    <button
-      class="close-cart"
-      id="closeCart"
-    >
-      ✕
-    </button>
-
-  </div>
-
-  <!-- CONTENT -->
-
-  <div class="cart-content">
-
-    <!-- TOTAL ITEM -->
-
-    <span id="totalItem">
-      0 item
-    </span>
-
-    <!-- CART ITEMS -->
-
-    <div
-      class="cart-items"
-      id="cartItems"
-    ></div>
-
-    <!-- FORM -->
-
-    <div class="checkout-form">
-
-      <input
-        type="text"
-        id="customerName"
-        placeholder="Nama Pemesan"
+      <button
+        class="close-cart"
+        id="closeCart"
       >
+        ✕
+      </button>
 
-      <input
-        type="tel"
-        id="customerPhone"
-        placeholder="Nomor WhatsApp / HP"
-      >
+    </div>
 
-      <textarea
-        id="customerAddress"
-        placeholder="Alamat Lengkap"
-      ></textarea>
+    <div class="cart-content">
 
-      <!-- CATATAN -->
+      <span id="totalItem">
+        0 item
+      </span>
 
-      <div class="cart-note">
+      <div
+        class="cart-items"
+        id="cartItems"
+      ></div>
 
-        <label>
-          Catatan Pesanan
-        </label>
+      <div class="checkout-form">
+
+        <input
+          type="text"
+          id="customerName"
+          placeholder="Nama Pemesan"
+        >
+
+        <input
+          type="tel"
+          id="customerPhone"
+          placeholder="Nomor WhatsApp / HP"
+        >
 
         <textarea
-          id="orderNote"
-          placeholder="
+          id="customerAddress"
+          placeholder="Alamat Lengkap"
+        ></textarea>
+
+        <!-- CATATAN -->
+
+        <div class="cart-note">
+
+          <label>
+            Catatan Pesanan
+          </label>
+
+          <textarea
+            id="orderNote"
+            placeholder="
 Contoh:
 - jangan pedas
 - kuah dipisah
 - banyakin kerupuk
 "
-        ></textarea>
+          ></textarea>
+
+        </div>
+
+        <!-- PEDAS -->
+
+        <select id="spicyLevel">
+
+          <option value="Original">
+            Original
+          </option>
+
+          <option value="1 Centong">
+            1 Centong
+          </option>
+
+          <option value="2 Centong">
+            2 Centong
+          </option>
+
+          <option value="3 Centong">
+            3 Centong
+          </option>
+
+          <option value="4 Centong">
+            4 Centong
+          </option>
+
+          <option value="5 Centong">
+            5 Centong
+          </option>
+
+        </select>
+
+        <!-- KUAH -->
+
+        <select id="soupType">
+
+          <option value="Nyemek">
+            Nyemek
+          </option>
+
+          <option value="Sedang">
+            Sedang
+          </option>
+
+          <option value="Banyak">
+            Banyak
+          </option>
+
+        </select>
+
+        <!-- RASA -->
+
+        <select id="tasteType">
+
+          <option value="Asin">
+            Asin
+          </option>
+
+          <option value="Manis">
+            Manis
+          </option>
+
+          <option value="Gurih">
+            Gurih
+          </option>
+
+        </select>
+
+        <!-- PAYMENT -->
+
+        <select id="paymentMethod">
+
+          <option value="COD">
+            COD
+          </option>
+
+          <option value="QRIS">
+            QRIS
+          </option>
+
+        </select>
+
+        <!-- QRIS BOX -->
+
+        <div
+          id="paymentBox"
+          class="payment-box"
+          style="display:none;"
+        >
+
+          <h3>
+            💳 Pembayaran QRIS
+          </h3>
+
+          <img
+            src="Qris.jpeg"
+            alt="QRIS"
+            class="qris-image"
+          >
+
+          <p>
+            Scan QRIS lalu upload bukti transfer
+          </p>
+
+          <!-- INPUT FILE -->
+
+          <input
+            type="file"
+            id="paymentProof"
+            accept="image/*"
+          >
+
+        </div>
+
+        <div id="distanceWarning"></div>
 
       </div>
 
-      <!-- PEDAS -->
+    </div>
 
-      <select id="spicyLevel">
+    <!-- TOTAL -->
 
-        <option value="Original">
-          Original
-        </option>
+    <div class="cart-total">
 
-        <option value="1 Centong">
-          1 Centong
-        </option>
+      <h2>
 
-        <option value="2 Centong">
-          2 Centong
-        </option>
+        Total:
+        <span id="totalPrice">
+          Rp 0
+        </span>
 
-        <option value="3 Centong">
-          3 Centong
-        </option>
+      </h2>
 
-        <option value="4 Centong">
-          4 Centong
-        </option>
+      <p id="shippingPrice">
 
-        <option value="5 Centong">
-          5 Centong
-        </option>
+        🚚 Ongkir: Rp 5000
 
-      </select>
+      </p>
 
-      <!-- KUAH -->
+      <button
+        id="checkoutBtn"
+        class="checkout-btn"
+        onclick="checkoutOrder()"
+      >
 
-      <select id="soupType">
+        Checkout Sekarang
 
-        <option value="Nyemek">
-          Nyemek
-        </option>
-
-        <option value="Sedang">
-          Sedang
-        </option>
-
-        <option value="Banyak">
-          Banyak
-        </option>
-
-      </select>
-
-      <!-- RASA -->
-
-      <select id="tasteType">
-
-        <option value="Asin">
-          Asin
-        </option>
-
-        <option value="Manis">
-          Manis
-        </option>
-
-        <option value="Gurih">
-          Gurih
-        </option>
-
-      </select>
-
-      <!-- WARNING -->
-
-      <div id="distanceWarning"></div>
+      </button>
 
     </div>
 
   </div>
 
-  <!-- TOTAL FIXED -->
-
-  <div class="cart-total">
-
-    <h2>
-
-      Total:
-      <span id="totalPrice">
-        Rp 0
-      </span>
-
-    </h2>
-
-    <!-- ONGKIR -->
-
-    <p id="shippingPrice">
-
-      🚚 Ongkir: Rp 5000
-
-    </p>
-
-    <!-- BUTTON -->
-
-    <button
-      id="checkoutBtn"
-      class="checkout-btn"
-      onclick="checkoutOrder()"
-    >
-
-      Checkout Sekarang
-
-    </button>
-
-  </div>
-
-</div>
-
-  <!-- =========================================
-       INFO TOKO
-  ========================================= -->
+  <!-- INFO TOKO -->
 
   <section class="store-info">
 
@@ -384,87 +396,9 @@ Contoh:
 
     </div>
 
-    <div class="store-grid">
-
-      <!-- TIKTOK -->
-
-      <a
-        href="https://www.tiktok.com/@santinurhs?is_from_webapp=1&sender_device=pc"
-        target="_blank"
-        class="info-card social-card"
-      >
-
-        <div class="info-icon">
-          🎵
-        </div>
-
-        <div>
-
-          <h3>TikTok</h3>
-
-          <p>
-            @Seblak.mamanabila🎀
-          </p>
-
-        </div>
-
-      </a>
-
-      <!-- ALAMAT -->
-
-      <div class="info-card">
-
-        <div class="info-icon">
-          📍
-        </div>
-
-        <div>
-
-          <h3>Alamat</h3>
-
-          <p>
-
-            Jl. Sirnagalih,
-            Kec. Indihiang,
-            Kota Tasikmalaya
-
-          </p>
-
-        </div>
-
-      </div>
-
-      <!-- JAM -->
-
-      <div class="info-card">
-
-        <div class="info-icon">
-          🕒
-        </div>
-
-        <div>
-
-          <h3>Hari & Jam Buka</h3>
-
-          <p>
-
-            Selasa - Minggu
-            <br>
-            12:00 - 22:00
-
-          </p>
-
-        </div>
-
-      </div>
-
-    </div>
-
   </section>
 
-  <!-- =========================================
-       WARNING TOKO TUTUP
-  ========================================= -->
+  <!-- WARNING -->
 
   <div
     id="storeWarning"
@@ -475,75 +409,112 @@ Contoh:
 
   </div>
 
-  <!-- =========================================
-       MOBILE CART SCRIPT
-  ========================================= -->
+  <!-- SCRIPT -->
 
   <script>
 
     const cartBox =
-      document.getElementById("cartBox");
+    document.getElementById("cartBox");
 
     const cartOverlay =
-      document.getElementById("cartOverlay");
+    document.getElementById("cartOverlay");
 
     const floatingToggle =
-      document.getElementById("floatingToggle");
+    document.getElementById("floatingToggle");
 
     const closeCart =
-      document.getElementById("closeCart");
+    document.getElementById("closeCart");
 
-    /* =========================================
-       OPEN CART
-    ========================================= */
+    const paymentMethod =
+    document.getElementById("paymentMethod");
+
+    const paymentBox =
+    document.getElementById("paymentBox");
+
+    /* OPEN CART */
 
     floatingToggle.addEventListener(
+
       "click",
-      () => {
+
+      ()=>{
 
         cartBox.classList.add("active");
+
         cartOverlay.classList.add("active");
 
       }
+
     );
 
-    /* =========================================
-       CLOSE CART
-    ========================================= */
+    /* CLOSE CART */
 
     function closeCartBox(){
 
       cartBox.classList.remove("active");
+
       cartOverlay.classList.remove("active");
 
     }
 
     closeCart.addEventListener(
+
       "click",
+
       closeCartBox
+
     );
 
     cartOverlay.addEventListener(
+
       "click",
+
       closeCartBox
+
     );
 
-    /* =========================================
-       SWIPE DOWN CLOSE
-    ========================================= */
+    /* PAYMENT TOGGLE */
+
+    paymentMethod.addEventListener(
+
+      "change",
+
+      ()=>{
+
+        if(paymentMethod.value === "QRIS"){
+
+          paymentBox.style.display =
+          "block";
+
+        }
+
+        else{
+
+          paymentBox.style.display =
+          "none";
+
+        }
+
+      }
+
+    );
+
+    /* SWIPE CLOSE */
 
     let startY = 0;
+
     let currentY = 0;
+
     let isDragging = false;
 
     cartBox.addEventListener(
 
       "touchstart",
 
-      (e) => {
+      (e)=>{
 
         startY =
-          e.touches[0].clientY;
+        e.touches[0].clientY;
 
         isDragging = true;
 
@@ -557,23 +528,23 @@ Contoh:
 
       "touchmove",
 
-      (e) => {
+      (e)=>{
 
         if(!isDragging) return;
 
         currentY =
-          e.touches[0].clientY;
+        e.touches[0].clientY;
 
         const diff =
-          currentY - startY;
+        currentY - startY;
 
         if(diff > 0){
 
           cartBox.style.transition =
-            "none";
+          "none";
 
           cartBox.style.transform =
-            `translateY(${diff}px)`;
+          `translateY(${diff}px)`;
 
         }
 
@@ -587,27 +558,23 @@ Contoh:
 
       "touchend",
 
-      () => {
+      ()=>{
 
         isDragging = false;
 
         const diff =
-          currentY - startY;
+        currentY - startY;
 
         cartBox.style.transition =
-          "transform .3s ease";
+        "transform .3s ease";
 
         if(diff > 120){
 
           closeCartBox();
 
-          cartBox.style.transform = "";
-
-        }else{
-
-          cartBox.style.transform = "";
-
         }
+
+        cartBox.style.transform = "";
 
       }
 
@@ -615,9 +582,7 @@ Contoh:
 
   </script>
 
-  <!-- =========================================
-       MAIN SCRIPT
-  ========================================= -->
+  <!-- MAIN SCRIPT -->
 
   <script
     type="module"
@@ -625,5 +590,4 @@ Contoh:
   ></script>
 
 </body>
-
 </html>
