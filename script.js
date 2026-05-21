@@ -25,7 +25,7 @@ const toppings = [
   },
 
   {
-    name:"Somay Kering",
+    name:"Cuanki",
     price:1000,
     image:"Somay Kering.jpeg"
   },
@@ -37,7 +37,7 @@ const toppings = [
   },
 
   {
-    name:"Bakso Aci",
+    name:"Cirawang",
     price:1000,
     image:"Bakso Aci.jpeg"
   },
@@ -181,7 +181,7 @@ const toppings = [
   },
 
   {
-    name:"Cilok Gajih",
+    name:"Cilok",
     price:1000,
     image:"Cilok.jpeg"
   },
@@ -195,7 +195,7 @@ const toppings = [
   {
     name:"Tahu Bakso",
     price:2000,
-    image:"Tahu Bakso.jpeg"
+    image:"Tahu IsI.jpeg"
   },
 
   {
@@ -751,7 +751,7 @@ function getShippingCost(){
   return 12000;
 
   if(currentDistance <= 10)
-  return 18000;
+  return 180000;
 
   if(currentDistance <= 15)
   return 25000;
@@ -1169,21 +1169,14 @@ function setCheckoutState(){
 }
 
 /* =========================================
-   CHECKOUT
+   CHECKOUT FIX
 ========================================= */
 
-/* =========================================
-   CHECKOUT
-========================================= */
-
-window.checkoutOrder =
-async()=>{
+window.checkoutOrder = async()=>{
 
   if(!locationReady){
 
-    alert(
-      "Tunggu lokasi dulu"
-    );
+    alert("Tunggu lokasi dulu");
 
     return;
 
@@ -1191,9 +1184,7 @@ async()=>{
 
   if(userTooFar){
 
-    alert(
-      "Diluar jangkauan"
-    );
+    alert("Diluar jangkauan");
 
     return;
 
@@ -1201,9 +1192,7 @@ async()=>{
 
   if(storeClosed){
 
-    alert(
-      "Warung sedang tutup"
-    );
+    alert("Warung sedang tutup");
 
     return;
 
@@ -1211,9 +1200,7 @@ async()=>{
 
   if(cart.length <= 0){
 
-    alert(
-      "Keranjang kosong"
-    );
+    alert("Keranjang kosong");
 
     return;
 
@@ -1222,17 +1209,17 @@ async()=>{
   const name =
   document.getElementById(
     "customerName"
-  ).value;
+  ).value.trim();
 
   const phone =
   document.getElementById(
     "customerPhone"
-  ).value;
+  ).value.trim();
 
   const address =
   document.getElementById(
     "customerAddress"
-  ).value;
+  ).value.trim();
 
   const spicyLevel =
   document.getElementById(
@@ -1254,33 +1241,72 @@ async()=>{
     "orderNote"
   ).value;
 
-  if(
-    !name ||
-    !phone ||
-    !address
-  ){
+  const paymentMethod =
+  document.getElementById(
+    "paymentMethod"
+  ).value;
+
+  if(!name || !phone || !address){
 
     alert(
-      "Lengkapi data"
+      "Lengkapi data dulu"
     );
 
     return;
 
   }
 
-  const shipping =
-  getShippingCost();
+  let paymentProof = "";
 
-  const total =
+  /* QRIS WAJIB BUKTI */
+  if(paymentMethod === "QRIS"){
+
+    const proofFile =
+    document.getElementById(
+      "paymentProof"
+    )?.files[0];
+
+    if(!proofFile){
+
+      alert(
+        "Upload bukti pembayaran QRIS dulu"
+      );
+
+      return;
+
+    }
+
+    paymentProof =
+    proofFile.name;
+
+  }
+
+  /* COD TIDAK BUTUH BUKTI */
+  if(paymentMethod === "COD"){
+
+    paymentProof = "";
+
+  }
+
+  const subtotal =
 
     cart.reduce(
       (a,b)=>a+b.price,
       0
-    ) +
+    );
 
-    shipping;
+  const shipping =
+  getShippingCost();
+
+  const total =
+  subtotal + shipping;
 
   try{
+
+    checkoutBtn.disabled = true;
+
+    checkoutBtn.innerHTML =
+    "⏳ Mengirim...";
 
     await addDoc(
 
@@ -1297,20 +1323,20 @@ async()=>{
 
         customerAddress:address,
 
-        spicyLevel:
+        paymentMethod,
 
+        paymentProof,
+
+        spicyLevel:
         spicyLevel || "Normal",
 
         soupType:
-
         soupType || "Berkuah",
 
         tasteType:
-
         tasteType || "Original",
 
         note:
-
         orderNote || "",
 
         items:cart,
@@ -1335,6 +1361,31 @@ async()=>{
       "Pesanan berhasil!"
     );
 
+    const waNumber = "6289637310086";
+
+const totalText =
+`Rp ${total.toLocaleString("id-ID")}`;
+
+const message = `Halo Admin Seblak Mama Nabila 🌶️
+
+Saya sudah transfer pembayaran QRIS.
+
+👤 Nama: ${name}
+🏠 Alamat: ${address}
+💰 Total: ${totalText}
+
+Bukti transfer saya lampirkan.
+Mohon konfirmasi admin 🙏`;
+
+if(paymentMethod === "QRIS"){
+
+  window.open(
+    `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`,
+    "_blank"
+  );
+
+}
+    
     cart = [];
 
     updateCart();
@@ -1357,8 +1408,13 @@ async()=>{
 
   }
 
-};
+  finally{
 
+    setCheckoutState();
+
+  }
+
+};
 /* =========================================
    START APP
 ========================================= */
