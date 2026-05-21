@@ -751,7 +751,7 @@ function getShippingCost(){
   return 12000;
 
   if(currentDistance <= 10)
-  return 180000;
+  return 18000;
 
   if(currentDistance <= 15)
   return 25000;
